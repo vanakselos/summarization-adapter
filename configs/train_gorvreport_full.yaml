@@ -1,0 +1,57 @@
+model:
+  base_model_id: Qwen/Qwen2.5-3B-Instruct
+  context_window_tokens: 32768
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+data:
+  train_datasets: [govreport]
+  eval_datasets: [govreport]
+  train_split: train
+  eval_split: validation
+  max_train_samples_per_dataset: 5000
+  max_eval_samples_per_dataset: 200
+  max_source_tokens: 8192
+  max_target_tokens: 512
+
+train:
+  output_dir: /content/drive/MyDrive/Work-2026/AppleInterview/govreport-5k
+  batch_size: 2
+  grad_accum: 8
+  lr: 0.00002
+  epochs: 1
+  warmup_ratio: 0.05
+  lr_scheduler_type: cosine
+  weight_decay: 0.01
+
+  logging_steps: 10
+  save_steps: 200
+  eval_steps: 500
+
+  seed: 42
+  gradient_checkpointing: true
+  auto_generate_outputs: false
+  
+
+inference:
+  chunk_tokens: 3072
+  chunk_overlap: 256
+  prompt_batch_size: 4
+  max_new_tokens: 512
+  temperature: 0.2
+  top_p: 0.9
+
+eval:
+  enable_rouge: true
+  enable_bertscore: true
+  enable_faithfulness_proxy: true
+  human_review_samples: 20
+
+runtime:
+  load_in_4bit: true
+  bfloat16: true
+  device: cuda:0

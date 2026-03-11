@@ -1,0 +1,11 @@
+# Python cache and artifacts
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+.vscode/
+
+# Local outputs
+outputs/

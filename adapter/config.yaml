@@ -1,0 +1,60 @@
+model:
+  base_model_id: Qwen/Qwen2.5-3B-Instruct
+  context_window_tokens: 32768
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.1
+  target_modules: [q_proj, v_proj]
+
+data:
+  train_datasets: [cnn_dailymail, xsum, govreport]
+  eval_datasets: [cnn_dailymail, xsum]
+  train_split: train
+  eval_split: validation
+  max_train_samples_per_dataset: null
+  max_eval_samples_per_dataset: 500
+  max_source_tokens: 2048
+  max_target_tokens: 256
+
+train:
+  output_dir: outputs/train
+  batch_size: 2
+  grad_accum: 8
+  lr: 0.0002
+  epochs: 2
+  warmup_ratio: 0.05
+  lr_scheduler_type: linear
+  weight_decay: 0.01
+  logging_steps: 10
+  save_steps: 100
+  eval_steps: 100
+  seed: 42
+  gradient_checkpointing: false
+  auto_generate_outputs: true
+
+inference:
+  strategy: hierarchical
+  chunk_tokens: 2048
+  chunk_overlap: 256
+  max_new_tokens: 256
+  temperature: 0.4
+  top_p: 0.9
+
+eval:
+  enable_rouge: true
+  enable_bertscore: true
+  enable_faithfulness_proxy: true
+  human_review_samples: 20
+  enable_llm_judge: false
+  llm_judge_model: google/gemini-3.1-pro-preview
+  llm_judge_api_base: https://openrouter.ai/api/v1
+  llm_judge_timeout_seconds: 120
+  llm_judge_max_tokens: 400
+  llm_judge_temperature: 0.0
+
+runtime:
+  load_in_4bit: true
+  bfloat16: true
+  device: auto

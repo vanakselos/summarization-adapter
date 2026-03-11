@@ -1,0 +1,54 @@
+model:
+  base_model_id: Qwen/Qwen2.5-3B-Instruct
+  context_window_tokens: 32768
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.1
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+data:
+  train_datasets: [xsum]
+  eval_datasets: [xsum]
+  train_split: train
+  eval_split: validation
+  max_train_samples_per_dataset: 5000
+  max_eval_samples_per_dataset: 200
+  max_source_tokens: 1024
+  max_target_tokens: 128
+
+train:
+  output_dir: outputs/train/xlsum_smoke
+  batch_size: 4
+  grad_accum: 4
+  lr: 0.0002
+  epochs: 2
+  warmup_ratio: 0.05
+  lr_scheduler_type: cosine
+  weight_decay: 0.01
+  logging_steps: 10
+  save_steps: 200
+  eval_steps: 100
+  seed: 42
+  auto_generate_outputs: true
+  gradient_checkpointing: false
+
+
+inference:
+  chunk_tokens: 1024
+  chunk_overlap: 128
+  max_new_tokens: 96
+  temperature: 0.2
+  top_p: 0.9
+
+eval:
+  enable_rouge: true
+  enable_bertscore: true
+  enable_faithfulness_proxy: true
+  human_review_samples: 20
+
+runtime:
+  load_in_4bit: false
+  bfloat16: true
+  device: auto

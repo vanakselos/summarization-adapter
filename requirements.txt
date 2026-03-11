@@ -1,0 +1,19 @@
+# Stable training/inference stack (Colab-friendly)
+torch==2.5.1
+torchvision==0.20.1
+torchaudio==2.5.1
+
+# NLP/adapter tooling
+transformers>=4.44,<5.0
+peft>=0.12
+accelerate>=0.34
+datasets>=2.20,<4.0
+bitsandbytes>=0.43
+safetensors>=0.4
+sentencepiece>=0.2
+
+# Evaluation/config
+PyYAML>=6.0
+bert-score>=0.3.13
+rouge-score>=0.1.2
+numpy>=1.26

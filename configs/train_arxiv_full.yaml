@@ -1,0 +1,55 @@
+model:
+  base_model_id: Qwen/Qwen2.5-3B-Instruct
+  context_window_tokens: 32768
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+data:
+  train_datasets: [arxiv]
+  eval_datasets: [arxiv]
+  train_split: train
+  eval_split: validation
+  max_train_samples_per_dataset: 5000
+  max_eval_samples_per_dataset: 100
+  max_source_tokens: 8192
+  max_target_tokens: 256
+
+train:
+  output_dir: outputs/train/arxiv
+  batch_size: 1
+  grad_accum: 8
+  lr: 0.00002
+  epochs: 3
+  warmup_ratio: 0.05
+  lr_scheduler_type: linear
+  weight_decay: 0.01
+  logging_steps: 10
+  save_steps: 200
+  eval_steps: 500
+  seed: 42
+  gradient_checkpointing: true
+  auto_generate_outputs: false
+
+inference:
+  strategy: arxiv_lead_refine
+  chunk_tokens: 2048
+  chunk_overlap: 256
+  max_new_tokens: 300
+  temperature: 0.2
+  top_p: 0.9
+  prompt_batch_size: 4
+
+eval:
+  enable_rouge: true
+  enable_bertscore: true
+  enable_faithfulness_proxy: true
+  human_review_samples: 20
+
+runtime:
+  load_in_4bit: true
+  bfloat16: true
+  device: cuda:0
